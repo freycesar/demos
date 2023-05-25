@@ -2,7 +2,7 @@
 Author: SUN Qingyu sunqingyu1997@gmail.com
 Date: 2023-05-25 15:05:46
 LastEditors: SUN Qingyu sunqingyu1997@gmail.com
-LastEditTime: 2023-05-25 15:38:33
+LastEditTime: 2023-05-25 16:08:13
 FilePath: \demos\Fixed_finger.py
 '''
 from pyautd3.link import SOEM
@@ -11,6 +11,7 @@ from pyautd3.gain import Focus
 from pyautd3 import Controller, SilencerConfig, Clear, Synchronize, Stop, DEVICE_WIDTH, DEVICE_HEIGHT
 from pyautd3.modulation import Static, Sine
 import numpy as np
+import time
 import ctypes
 import platform
 import os
@@ -28,23 +29,23 @@ H = 480
 def stm_gain(autd: Controller):
     config = SilencerConfig.none()
     autd.send(config)
+    m = Static(1)
     stm = GainSTM(autd)
     radius = 1.0
+    stm.frequency = 5
+    size = 200
     # step = 0.2
     # size = 50 * 2 * np.pi * radius // step
-
     center = autd.geometry.center + np.array([0., 0., 150.])
-    for i in range(1000):
-        radius += 0.005
-        # theta = step / radius
-        theta = 50 * 2 * np.pi * i / 1000
-        p = radius * np.array([np.cos(theta), np.sin(theta), 0])
-        f = Focus(center + p)
-        stm.add(f)
-
-    m = Static(1)
-    stm.frequency = 0.4
-    autd.send(m, stm)
+    for radius in range(6):
+        for i in range(size):
+            # theta = step / radius
+            theta = 2 * np.pi * i / size
+            p = radius * np.array([np.cos(theta), np.sin(theta), 0])
+            f = Focus(center + p)
+            stm.add(f)
+        autd.send(m,stm)
+        radius += 0.01
 
 def run(autd: Controller):
     autd.send(Clear())
@@ -80,14 +81,6 @@ if __name__ == '__main__':
 
     if_use_simulator = input('If use simulator? [y: simulator] or [n: AUTD]: ')
 
-    # if if_use_simulator == 'y':
-    #     print('Use simulator')
-    #     link = Simulator().build()
-    # elif if_use_simulator == 'n':
-    #     print('Use AUTD device')
-    #     link = SOEM().high_precision(True).build()
-    # else:
-    #     exit()
 
     link = SOEM().high_precision(True).build()
 
