@@ -2,22 +2,19 @@
 Author: SUN Qingyu sunqingyu1997@gmail.com
 Date: 2023-05-25 15:05:46
 LastEditors: SUN Qingyu sunqingyu1997@gmail.com
-LastEditTime: 2023-05-25 16:20:31
+LastEditTime: 2023-05-25 16:21:47
 FilePath: \demos\Fixed_finger.py
 '''
 from pyautd3.link import SOEM
-from pyautd3.link import Simulator
 from pyautd3.gain import Focus
 from pyautd3 import Controller, SilencerConfig, Clear, Synchronize, Stop, DEVICE_WIDTH, DEVICE_HEIGHT
 from pyautd3.modulation import Static, Sine
 import numpy as np
 import time
+from pyautd3.stm import GainSTM
 import ctypes
 import platform
 import os
-import math
-from multiprocessing import Process, Pipe
-import time
 
 # use cpp to get high precision sleep time
 dll = ctypes.cdll.LoadLibrary
@@ -29,7 +26,7 @@ H = 480
 def stm_gain(autd: Controller):
     config = SilencerConfig.none()
     autd.send(config)
-    m = Static(1)
+    m = Static(1.0)
     stm = GainSTM(autd)
     radius = 1.0
     # radius_velocity = r_v
