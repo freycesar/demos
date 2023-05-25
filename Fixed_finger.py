@@ -2,7 +2,7 @@
 Author: SUN Qingyu sunqingyu1997@gmail.com
 Date: 2023-05-25 15:05:46
 LastEditors: SUN Qingyu sunqingyu1997@gmail.com
-LastEditTime: 2023-05-25 16:08:13
+LastEditTime: 2023-05-25 16:20:31
 FilePath: \demos\Fixed_finger.py
 '''
 from pyautd3.link import SOEM
@@ -32,8 +32,10 @@ def stm_gain(autd: Controller):
     m = Static(1)
     stm = GainSTM(autd)
     radius = 1.0
+    # radius_velocity = r_v
     stm.frequency = 5
     size = 200
+    n_updatecircle = 1
     # step = 0.2
     # size = 50 * 2 * np.pi * radius // step
     center = autd.geometry.center + np.array([0., 0., 150.])
@@ -45,7 +47,9 @@ def stm_gain(autd: Controller):
             f = Focus(center + p)
             stm.add(f)
         autd.send(m,stm)
+        time.sleep(n_updatecircle * 1 / stm.frequency)
         radius += 0.01
+       # radius += r_v * 0.01
 
 def run(autd: Controller):
     autd.send(Clear())
