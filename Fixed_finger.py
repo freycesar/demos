@@ -35,8 +35,10 @@ def stm_gain(autd: Controller):
     stm = GainSTM()
     radius = 1.0
     # radius_velocity = r_v
-    size = 200
+    size = 50
     n_updatecircle = 1
+    stm.frequency = 5
+    time_step=n_updatecircle * 1 / stm.frequency
     # step = 0.2
     # size = 50 * 2 * np.pi * radius // step
     center = autd.geometry.center + np.array([0., 0., 150.])
@@ -47,10 +49,9 @@ def stm_gain(autd: Controller):
             p = radius * np.array([np.cos(theta), np.sin(theta), 0])
             f = Focus(center + p)
             stm.add(f)
-        stm.frequency = 5
         autd.send(m,stm)
-        time.sleep(n_updatecircle * 1 / stm.frequency)
-        radius += 0.01
+        libc.HighPrecisionSleep(ctypes.c_float(time_step))
+        radius += 0.1
        # radius += r_v * 0.01
 
 def run(autd: Controller):
