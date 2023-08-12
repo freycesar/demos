@@ -50,7 +50,7 @@ def stm_gain(autd: Controller):
             f = Focus(center + p)
             stm.add(f)
         autd.send(m,stm)
-        libc.HighPrecisionSleep(ctypes.c_float(time_step))
+        libc.HighPrecisionSleep(ctypes.c_float(time_step-0.05))
         radius += 0.1
        # radius += r_v * 0.01
 
