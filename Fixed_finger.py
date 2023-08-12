@@ -45,19 +45,12 @@ def stm_gain(autd: Controller):
     center = autd.geometry.center + np.array([0., 0., 150.])
 
     for circle_number in range(50):
-        tic = time.time()
         for i in range(size):
             # theta = step / radius
             theta = 2 * np.pi * i / size
             p = radius * np.array([np.cos(theta), np.sin(theta), 0])
             f = Focus(center + p)
             stm.add(f)
-        toc = time.time()
-        print(toc - tic)
-        tic = time.time()
-        autd.send(m,stm)
-        toc = time.time()
-        print(toc - tic)
         libc.HighPrecisionSleep(ctypes.c_float(time_step))
         # time.sleep(time_step)
         radius += 0.1
