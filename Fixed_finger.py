@@ -36,25 +36,35 @@ def stm_gain(autd: Controller):
     radius = 1.0
     # radius_velocity = r_v
     size = 50
-    n_updatecircle = 1.
+    # n_updatecircle = 1.
     stm.frequency = 5.
-    # time_step = (n_updatecircle * 1.) / stm.frequency
-    time_step = 0.2
+    time_step = n_updatecircle / stm.frequency
+    # time_step = 0.2
     # step = 0.2
     # size = 50 * 2 * np.pi * radius // step
     center = autd.geometry.center + np.array([0., 0., 150.])
 
-    for circle_number in range(50):
-        for i in range(size):
-            # theta = step / radius
-            theta = 2 * np.pi * i / size
-            p = radius * np.array([np.cos(theta), np.sin(theta), 0])
-            f = Focus(center + p)
-            stm.add(f)
-        libc.HighPrecisionSleep(ctypes.c_float(time_step))
-        # time.sleep(time_step)
-        radius += 0.1
-       # radius += r_v * 0.01
+    while True:
+        for circle_number in range(50):
+            for i in range(size):
+                # theta = step / radius
+                theta = 2 * np.pi * i / size
+                p = radius * np.array([np.cos(theta), np.sin(theta), 0])
+                f = Focus(center + p)
+                stm.add(f)
+            libc.HighPrecisionSleep(ctypes.c_float(time_step))
+            # time.sleep(time_step)
+            radius += 0.1
+        for circle_number in range(50):
+            for i in range(size):
+                # theta = step / radius
+                theta = 2 * np.pi * i / size
+                p = radius * np.array([np.cos(theta), np.sin(theta), 0])
+                f = Focus(center + p)
+                stm.add(f)
+            libc.HighPrecisionSleep(ctypes.c_float(time_step))
+            # time.sleep(time_step)
+            radius -= 0.1
 
 def run(autd: Controller):
     autd.send(Clear())
@@ -76,6 +86,18 @@ def run(autd: Controller):
 
 if __name__ == '__main__':
 
+    rank = int(input("input softness level"))
+    print("")
+    if rank == 1:
+        print("Soft")
+        n_updatecircle = 1
+    elif rank == 2:
+        print("Medium")
+        n_updatecircle = 3
+    elif rank == 3:
+        n_updatecircle = 6
+        print("Hard")
+ 
     W_cos = math.cos(math.pi/12) * DEVICE_WIDTH
     geometry = Geometry.Builder()\
             .add_device([W_cos - (DEVICE_WIDTH - W_cos), DEVICE_HEIGHT - 10 + 12.5, 0.], [math.pi, math.pi/12, 0.])\
