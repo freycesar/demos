@@ -40,9 +40,13 @@ def stm_gain(autd: Controller):
     stm.frequency = 5.
     time_step = n_updatecircle / stm.frequency
     # time_step = 0.2
-    # step = 0.2
-    # size = 50 * 2 * np.pi * radius // step
     center = autd.geometry.center + np.array([0., 0., 150.])
+
+#       共九种刺激
+#       半径range：0-4 mm, 0-8 mm, 0-12 mm
+#       速度变化：2 mm/s, 5 mm/s, 8 mm/s
+#       每种刺激对应一个总时长，因为固定STM频率不变，所以(1)圈数确定，为总时长/频率向上取正
+#       (2) 当圈数确定后，每圈半径增大的量也可以确定
 
     while True:
         for circle_number in range(50):
@@ -83,6 +87,16 @@ def run(autd: Controller):
     autd.send(Stop())
     autd.dispose()
 
+# 实验一（本次不做）：先测力回归声压和stm频率的关系，然后分别测单位时间里手指按不同材料的力-时间曲线
+#                 因为力和高度变化量成正比，则半径和速度的1/3次方成比例
+#                 分析则通过混淆矩阵，来判断渲染是否成功
+# 实验二：分别控制接触面积变化速率和半径范围不变，给三个level的刺激共3 * 3 = 9 种，共 9 * 3 = 27 次随机present，参加者回答rank1-5（）
+#        不控制总时长，控制STM频率为5Hz，其中半径range：0-4 mm, 0-8 mm, 0-12 mm
+#                                   速度变化：2 mm/s, 5 mm/s, 8 mm/s
+#                                   因此所用时间为：2s, 4s, 6s / 0.8s, 1.6s, 2.4s / 0.5s, 1s, 1.5s
+#                                   因为STM频率为 0.2s，  
+#        首先算3by3的混淆矩阵，来评价渲染是否成功
+#        然后9个之间做t test检验比较，得出两个factor哪个影响大
 
 if __name__ == '__main__':
 
