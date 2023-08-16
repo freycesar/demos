@@ -32,16 +32,22 @@ def stm_gain(autd: Controller):
     config = SilencerConfig.none()
     autd.send(config)
     m = Static(1.0)
+    # m = Sine(100)
     stm = GainSTM()
     radius = 1.
-    # radius_velocity = r_v
     size = 50
-    # n_updatecircle = 1.
-    stm_f = 5.
-    # time_step = n_updatecircle / stm.frequency
-    time_step = 0.2
+    stm_f = 10
+
+    # two factors, raduis_velocity ~ mm/s
+    radius_range = 5
+    redius_velocity = 5
+    
+    # Experimental parameters
+    circle_number = int((radius_range / redius_velocity) * stm_f)
+    delta_r = radius_range / circle_number
+
     theta = 0.
-    center = autd.geometry.center + np.array([0., 0., 150.])
+    center = autd.geometry.center + np.array([0., 0., 250.])
 
 #       共九种刺激
 #       半径range：0-4 mm, 0-8 mm, 0-12 mm
@@ -50,7 +56,7 @@ def stm_gain(autd: Controller):
 #       (2) 当圈数确定后，每圈半径增大的量也可以确定
 
     while True:
-        for circle_number in range(50):
+        for j in range(circle_number):
             for i in range(size):
                 # step = (2 * math.pi * radius) / 50
                 time_step_point = (1 / stm_f) / size  # recalculate time step
@@ -59,9 +65,9 @@ def stm_gain(autd: Controller):
                 f = Focus(center + p)
                 autd.send(m, f)
                 libc.HighPrecisionSleep(ctypes.c_float(time_step_point))
-            radius +=0.1
+            radius += delta_r
 
-        for circle_number in range(50):
+        for j in range(circle_number):
             for i in range(size):
                 time_step_point = (1 / stm_f) / size  # recalculate time step
                 theta += (2 * math.pi) / size
@@ -69,7 +75,7 @@ def stm_gain(autd: Controller):
                 f = Focus(center + p)
                 autd.send(m, f)
                 libc.HighPrecisionSleep(ctypes.c_float(time_step_point))
-            radius +=0.1
+            radius -= delta_r
 
 def run(autd: Controller):
     autd.send(Clear())
