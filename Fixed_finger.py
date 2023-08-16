@@ -37,9 +37,9 @@ def stm_gain(autd: Controller):
     # radius_velocity = r_v
     size = 50
     # n_updatecircle = 1.
-    stm.frequency = 5.
-    time_step = n_updatecircle / stm.frequency
-    # time_step = 0.2
+    # stm.frequency = 5.
+    # time_step = n_updatecircle / stm.frequency
+    time_step = 0.2
     center = autd.geometry.center + np.array([0., 0., 150.])
 
 #       共九种刺激
@@ -99,18 +99,6 @@ def run(autd: Controller):
 #        然后9个之间做t test检验比较，得出两个factor哪个影响大
 
 if __name__ == '__main__':
-
-    rank = int(input("input softness level"))
-    print("")
-    if rank == 1:
-        print("Soft")
-        n_updatecircle = 1
-    elif rank == 2:
-        print("Medium")
-        n_updatecircle = 3
-    elif rank == 3:
-        n_updatecircle = 6
-        print("Hard")
  
     W_cos = math.cos(math.pi/12) * DEVICE_WIDTH
     geometry = Geometry.Builder()\
@@ -120,9 +108,9 @@ if __name__ == '__main__':
             .add_device([-W_cos + (DEVICE_WIDTH - W_cos), -DEVICE_HEIGHT - 12.5, 0.], [0., math.pi/12, 0.])\
             .build()
     
-    # on_lost_func = OnLostFunc(on_lost)
-    link = Simulator().build()
-    # link = SOEM().on_lost(on_lost_func).build()    
+    on_lost_func = OnLostFunc(on_lost)
+    # link = Simulator().build()
+    link = SOEM().on_lost(on_lost_func).build()    
     autd = Controller.open(geometry, link)
     # if_use_simulator = input('If use simulator? [y: simulator] or [n: AUTD]: ')
 
